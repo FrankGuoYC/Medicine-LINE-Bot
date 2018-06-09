@@ -18,3 +18,22 @@ Promise
     res.json(result);
     });
 });
+
+function handleEvent(event) {
+  switch (event.type) {
+    case 'join':
+    case 'follow':
+      return client.replyMessage(event.replyToken, {
+        type: 'text',
+        text: '你好請問我們認識嗎?'
+      });   
+    case 'message':
+      switch (event.message.type) {
+        case 'text':
+          return client.replyMessage(event.replyToken, {
+            type: 'text',
+            text: (event.message.text+'~*')
+          });
+      }
+  }
+}
