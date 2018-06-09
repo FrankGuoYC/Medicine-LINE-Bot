@@ -1,39 +1,22 @@
-const line = require('@line/bot-sdk');
-const express = require('express');
-const lineConfig = {
-  channelAccessToken: process.env.HEROKU_LINE_CHANNEL_ACCESS_TOKEN,
-  channelSecret: process.env.HEROKU_LINE_CHANNEL_SECRET
-};
-const client = new line.Client(lineConfig);
-const app = express();
+var linebot = require('linebot');
+var express = require('express');
 
-app.listen(3000, function() {
-    console.log('App now running on port', this.address().port);
-  });
-
-app.post('/', line.middleware(lineConfig), function(req, res) {
-Promise
-    .all(req.body.events.map(handleEvent))
-    .then(function(result) {
-    res.json(result);
-    });
+var bot = linebot({
+  channelId: "1582316615",
+  channelSecret: "94f9d0d9a00c8d2111f69153d3f62a38",
+  channelAccessToken: "pbJnnx5h0DCxsAmvhpqhsXvj8wWPYm/PxHAXSYP3gVNxqyS3JNkOPuYuF1uKlSllEXxUr4LcMae89wbTKU/Y5fL8pKpzAwOuJDDK8l8ILgtBaHmvLT68lAIuM13T3kel1sgU35VbxLYDE5psUo5UlgdB04t89/1O/w1cDnyilFU="
 });
 
-function handleEvent(event) {
-  switch (event.type) {
-    case 'join':
-    case 'follow':
-      return client.replyMessage(event.replyToken, {
-        type: 'text',
-        text: '你好請問我們認識嗎?'
-      });   
-    case 'message':
-      switch (event.message.type) {
-        case 'text':
-          return client.replyMessage(event.replyToken, {
-            type: 'text',
-            text: (event.message.text+'~*')
-          });
-      }
-  }
-}
+bot.on('message', function(event) {
+  console.log(event); //把收到訊息的 event 印出來看看
+});
+
+const app = express();
+const linebotParser = bot.parser();
+app.post('/', linebotParser);
+
+//因為 express 預設走 port 3000，而 heroku 上預設卻不是，要透過下列程式轉換
+var server = app.listen(process.env.PORT || 8080, function() {
+  var port = server.address().port;
+  console.log("App now running on port", port);
+});
