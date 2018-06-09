@@ -211,7 +211,7 @@ bot.on('message', function(event) {
             )
         } else {
             // 答錯，顯示錯誤訊息
-            replyMsg.push(
+            replyMsgs.push(
                 {
                     "type": "text",
                     "label": "答錯了，正確答案為: \"" + answerText +"\"",
