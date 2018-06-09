@@ -1,8 +1,8 @@
 {
-  "name": "medicine-line-bot_herokutest",
+  "name": "medicine-line-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "medicine_bot.js",
   "scripts": {
     "start": "node ."
   },
