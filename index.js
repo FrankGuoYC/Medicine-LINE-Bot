@@ -21,8 +21,8 @@ bot.on('message', function(event) {
 });
 
 setTimeout(function(){
-    var userId = '使用者 ID';
-    var sendMsg = '要發送的文字';
+    var userId = 'yckuo5k2b';
+    var sendMsg = '嗨你好，我是用藥常識小精靈:)';
     bot.push(userId,sendMsg);
     console.log('send: '+sendMsg);
 },5000);
