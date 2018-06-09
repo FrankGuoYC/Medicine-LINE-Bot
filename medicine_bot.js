@@ -117,6 +117,9 @@ bot.on('message', function(event) {
     }
     // let usr = getUser(curUserId)
 
+    console.log("event")
+    console.log(event)
+    console.log("event message text: " + event.message.text)
     // 根據user的state來做出對應的回覆
     // --- Declaration ---
     let replyMsg = {
@@ -296,7 +299,7 @@ bot.on('message', function(event) {
 
 
     }
-    
+
     event.reply(replyMsg)
     // if (event.message.type = 'text') {
     //     var msg = event.message.text;
