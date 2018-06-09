@@ -11,7 +11,8 @@ try {
     console.log('Error:', e.stack)
 }
 
-// 先用簡單一點的寫法，之後再看要不要用專業一點的寫法
+// 儲存使用者變數
+// 先用簡單一點的寫法，有時間再改成好一點的寫法(例如寫成一個Object)
 let users = {}
 let State = {
     start: "start",
@@ -122,10 +123,7 @@ bot.on('message', function(event) {
     console.log("event message text: " + event.message.text)
     // 根據user的state來做出對應的回覆
     // --- Declaration ---
-    let replyMsg = {
-        replyToken: event.replyToken,
-        messages: []
-    }
+    let replyMsgs = []  // 用來存一個或多個要送出的訊息
     let options = []
     let optionsForQuestion = []
     let optionsActions = []
@@ -153,7 +151,7 @@ bot.on('message', function(event) {
                     }
                 )
             }
-            replyMsg.messages.push(
+            replyMsgs.push(
                 {
                     "type": "template",
                     "altText": "This is a buttons template",
@@ -175,7 +173,7 @@ bot.on('message', function(event) {
                 )
             }
             
-            replyMsg.messages.push(
+            replyMsgs.push(
                 {
                     "type": "template",
                     "altText": "This is a buttons template",
@@ -204,7 +202,7 @@ bot.on('message', function(event) {
         if(event.message.text == answerText) {
             incrementUserCorrectAnsNum(curUserId)   // 答對題數+1，
             // 答對，顯示正確訊息
-            replyMsg.messages.push(
+            replyMsgs.push(
                 {
                     "type": "text",
                     // "label": "答對了!",
@@ -213,7 +211,7 @@ bot.on('message', function(event) {
             )
         } else {
             // 答錯，顯示錯誤訊息
-            replyMsg.messages.push(
+            replyMsg.push(
                 {
                     "type": "text",
                     "label": "答錯了，正確答案為: \"" + answerText +"\"",
@@ -222,7 +220,7 @@ bot.on('message', function(event) {
             )
         }
         // 顯示詳解
-        replyMsg.messages.push(
+        replyMsgs.push(
             {
                 "type": "text",
                 "label": detailedExpText,
@@ -243,14 +241,14 @@ bot.on('message', function(event) {
             setUserState(curUserId, State.start)
             let score = Math.round( (getUserCorrectAnsNum(curUserId) / getUserQuesNo(curUserId) ) * 100 )
             setUserScore(curUserId, score)
-            replyMsg.messages.push(
+            replyMsgs.push(
                 {
                     "type": "text",
                     "label": "恭喜您完成了本遊戲! 您的得分為" + getUserScore(curUserId) + "分",
                     "text":  "恭喜您完成了本遊戲! 您的得分為" + getUserScore(curUserId) + "分", 
                 }
             )
-            replyMsg.messages.push(
+            replyMsgs.push(
                 {
                     "type": "template",
                     "altText": "this is a confirm template",
@@ -284,7 +282,7 @@ bot.on('message', function(event) {
                 )
             }
 
-            replyMsg.messages.push(
+            replyMsgs.push(
                 {
                     "type": "template",
                     "altText": "This is a buttons template",
@@ -296,21 +294,10 @@ bot.on('message', function(event) {
                 }
             )
         }
-
-
     }
 
-    event.reply(replyMsg)
-    // if (event.message.type = 'text') {
-    //     var msg = event.message.text;
-    //     event.reply(msg).then(function(data) {
-    //     // success 
-    //         console.log(msg);
-    //     }).catch(function(error) {
-    //         // error 
-    //         console.log('error');
-    //     });
-    // }
+    // 最後將一個或多個訊息送出
+    event.reply(replyMsgs)
 });
 
 
