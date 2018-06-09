@@ -1,7 +1,16 @@
-var linebot = require('linebot');
-var express = require('express');
+let linebot = require('linebot');
+let express = require('express');
+let fs = require('fs')
 
-var bot = linebot({
+let quesBank = null
+try {  
+    let content = fs.readFileSync('ques_bank.json', 'utf8')
+    quesBank = JSON.parse(content)
+} catch(e) {
+    console.log('Error:', e.stack)
+}
+
+let bot = linebot({
     channelId: "1582316615",
     channelSecret: "94f9d0d9a00c8d2111f69153d3f62a38",
     channelAccessToken: "pbJnnx5h0DCxsAmvhpqhsXvj8wWPYm/PxHAXSYP3gVNxqyS3JNkOPuYuF1uKlSllEXxUr4LcMae89wbTKU/Y5fL8pKpzAwOuJDDK8l8ILgtBaHmvLT68lAIuM13T3kel1sgU35VbxLYDE5psUo5UlgdB04t89/1O/w1cDnyilFU="
@@ -20,19 +29,13 @@ bot.on('message', function(event) {
     }
 });
 
-setTimeout(function(){
-    var userId = 'yckuo5k2b';
-    var sendMsg = '嗨你好，我是用藥常識小精靈:)';
-    bot.push(userId,sendMsg);
-    console.log('send: '+sendMsg);
-},5000);
 
 const app = express();
 const linebotParser = bot.parser();
 app.post('/', linebotParser);
 
 //因為 express 預設走 port 3000，而 heroku 上預設卻不是，要透過下列程式轉換
-var server = app.listen(process.env.PORT || 8080, function() {
-    var port = server.address().port;
+let server = app.listen(process.env.PORT || 8080, function() {
+    let port = server.address().port;
     console.log("App now running on port", port);
 });
