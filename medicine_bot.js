@@ -1,3 +1,6 @@
+import 'jieba-js/scripts/main.js'
+import 'jieba-js/scripts/data/dictionary.js'
+
 let linebot = require('linebot');
 let express = require('express');
 let fs = require('fs')
