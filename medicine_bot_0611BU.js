@@ -27,8 +27,7 @@ function addUser(usrId){
         score: undefined,
         category: undefined,
         quesNo: undefined,
-        correctAnsNum: undefined,
-        quesLen: 5
+        correctAnsNum: undefined
     }
 }
 
@@ -83,14 +82,6 @@ function setUserCorrectAnsNum(usrId, cno){
 
 function incrementUserCorrectAnsNum(usrId){
     users[usrId].correctAnsNum++
-}
-
-function getUserQuesLen(usrId){
-    return users[usrId].quesLen
-}
-
-function setUserQuesLen(usrId, quesLen){
-    users[usrId].quesLen = quesLen
 }
 
 function initUserGameData(usrId){
@@ -243,7 +234,7 @@ bot.on('message', function(event) {
         console.log(quesBank[curUserCategory].content.length)
         incrementUserQuesNo(curUserId, curQuesNum)
         // 檢查是否題目已經出完
-        if(curQuesNum >= getUserQuesLen(curUserId)){
+        if(curQuesNum >= quesBank[curUserCategory].content.length){
             // 顯示完成遊戲訊息
             // 計算分數
             // 將User狀態設回start
