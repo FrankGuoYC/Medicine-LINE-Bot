@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "javascript-state-machine": "^3.0.1",
+    "node-requirejs": "^0.1.1",
     "requirejs": "^2.3.5",
     "viz.js": "^2.0.0"
   }

@@ -5,7 +5,13 @@ let linebot = require('linebot')
 let express = require('express')
 let fs = require('fs')
 let StateMachine = require('javascript-state-machine')
-let rqJs = require('requirejs')
+var requirejs = require('requirejs').requirejs(
+    {
+        baseUrl: '',
+        nodeRequire: 'require'
+    }
+);
+var mainJs = requirejs('jiebajs/scripts/main.js');
 
 // These are for the visualization of the finite state machine
 // const Viz = require('viz.js')
@@ -27,12 +33,12 @@ let rqJs = require('requirejs')
 // 初始化有限狀態機
 // <待補上>
 
-rqJs.require('jiebajs/scripts/main.js');
+// rqJs.require('jiebajs/scripts/main.js');
  
 _text = "這個布丁是在無聊的世界中找尋樂趣的一種不能吃的食物，喜愛動漫畫、遊戲、程式，以及跟世間脫節的生活步調。";
  
-dict1 = rqJs.require('jiebajs/scripts/data/dictionary.js');
-dict2 = rqJs.require('jiebajs/scripts/data/dict_custom.js');
+dict1 = requirejs('jiebajs/scripts/data/dictionary.js');
+dict2 = requirejs('jiebajs/scripts/data/dict_custom.js');
  
 node_jieba_parsing([dict1, dict2], _text, function (_result) {
     console.log(_result.join(" "));
