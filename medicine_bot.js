@@ -35,7 +35,7 @@ dict2 = require('jiebajs/scripts/data/dict_custom.js');
  
 node_jieba_parsing([dict1, dict2], _text, function (_result) {
     console.log(_result.join(" "));
-    console.log("我在這裡!")
+    console.log("我在這裡!");
 });
 
 
