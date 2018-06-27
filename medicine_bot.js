@@ -5,7 +5,7 @@ let linebot = require('linebot')
 let express = require('express')
 let fs = require('fs')
 let StateMachine = require('javascript-state-machine')
-let rqJs = require('requireJs')
+let rqJs = require('requirejs')
 
 // These are for the visualization of the finite state machine
 // const Viz = require('viz.js')
