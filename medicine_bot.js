@@ -7,23 +7,39 @@ let fs = require('fs')
 let StateMachine = require('javascript-state-machine')
 
 // These are for the visualization of the finite state machine
-const Viz = require('viz.js')
-const { Module, render } = require('viz.js/full.render.js')
-let viz = new Viz({ Module, render })
+// const Viz = require('viz.js')
+// const { Module, render } = require('viz.js/full.render.js')
+// let viz = new Viz({ Module, render })
 
-viz.renderString('digraph { a -> b }')
-  .then(result => {
-    console.log(result);
-  })
-  .catch(error => {
-    // Create a new Viz instance (@see Caveats page for more info)
-    viz = new Viz({ Module, render });
+// viz.renderString('digraph { a -> b }')
+//   .then(result => {
+//     console.log(result);
+//   })
+//   .catch(error => {
+//     // Create a new Viz instance (@see Caveats page for more info)
+//     viz = new Viz({ Module, render });
 
-    // Possibly display the error
-    console.error(error);
-  })
+//     // Possibly display the error
+//     console.error(error);
+//   })
 
 // 初始化有限狀態機
+// <待補上>
+
+require('../scripts/main.js');
+ 
+_text = "這個布丁是在無聊的世界中找尋樂趣的一種不能吃的食物，喜愛動漫畫、遊戲、程式，以及跟世間脫節的生活步調。";
+ 
+dict1 = require('jieba-js/scripts/data/dictionary.js');
+dict2 = require('jieba-js/scripts/data/dict.js');
+ 
+node_jieba_parsing([dict1, dict2], _text, function (_result) {
+    console.log(_result.join(" "));
+    console.log("我在這裡!")
+});
+
+
+
 
 // 載入題庫
 let quesBank = null
