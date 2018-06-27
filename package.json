@@ -12,5 +12,8 @@
     "@line/bot-sdk": "^6.0.2",
     "express": "^4.16.3",
     "linebot": "^1.4.1"
+  },
+  "dependencies": {
+    "javascript-state-machine": "^3.0.1"
   }
 }

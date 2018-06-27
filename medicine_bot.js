@@ -1,9 +1,10 @@
 // import 'jieba-js/scripts/main.js'
 // import 'jieba-js/scripts/data/dictionary.js'
 
-let linebot = require('linebot');
-let express = require('express');
+let linebot = require('linebot')
+let express = require('express')
 let fs = require('fs')
+let StateMachine = require('javascript-state-machine')
 
 // 載入題庫
 let quesBank = null
@@ -18,6 +19,7 @@ try {
 // 先用簡單一點的寫法，有時間再改成好一點的寫法(例如寫成一個Object)
 let users = {}
 let State = {
+    welcome: "welcome",
     start: "start",
     chooseCategory: "chooseCategory",
     question: "question"
