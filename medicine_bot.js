@@ -27,7 +27,7 @@ console.log(nodejieba.tag('我們不禁哄堂大笑，同樣的一件衣料，�
 //   })
 
 // 初始化有限狀態機
-let fsm = StateMachine.create({
+let fsm = new StateMachine({
     initial: 'welcome',
     events: [
         { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
