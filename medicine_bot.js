@@ -293,6 +293,8 @@ bot.on('message', function(event) {
     }
     else if( getUserState(curUserId) == State.start ) {
         if(categories.includes(event.message.text)){   // 如果user回覆的是categories中的其中一種
+            console.log("Categories: ")
+            console.log(categories)
             setUserCategory(curUserId, categories.indexOf(event.message.text))
             setUserState(curUserId, State.question)
             // 初始化
