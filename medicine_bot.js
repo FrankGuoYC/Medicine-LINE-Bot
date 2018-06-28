@@ -199,7 +199,8 @@ function removeUser(usrId){
 
 // 初始化回覆使用者button template的時候所需用到的options
 let categories = [] // 用於詢問使用者要使用哪一領域的問題
-let optionsForWelcome = []  // 用於歡迎畫面的按鈕
+let categoryButtons = []
+let welcomeButtons = []  // 用於歡迎畫面的按鈕
 
 // 初始化一些變數，例如: button template的選項內容
 function init(){
@@ -207,18 +208,28 @@ function init(){
     for(let i=0;i<quesBank.length;i++){
         categories.push(quesBank[i].category)
     }
-
-    // init optionsForWelcome
-    optionsForWelcome.push({
+    // init categoryButtons
+    for(let i=0;i<quesBank.length;i++){
+        categoryButtons.push({
+                "type": "message",
+                "label": categories[i],
+                "text": categories[i]
+            }
+        )
+    }
+    // init welcomeButtons
+    welcomeButtons.push({
         "type": "message",
         "label": "我要玩遊戲",
         "text": "我要玩遊戲"
     })
-    optionsForWelcome.push({
+    welcomeButtons.push({
         "type": "message",
         "label": "我要問問題",
         "text": "我要問問題"
     })
+
+
 }
 
 init()  // 執行初始化
@@ -278,9 +289,7 @@ bot.on('message', function(event) {
     // 根據user的state來做出對應的回覆
     // --- Declaration ---
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
-
-    let optionsForQuestion = []
-    let optionsActions = []
+    let optionButtons = [] // 用來儲存問題的選項
 
     if( getUserState(curUserId) == State.welcome ){
         replyMsgs.push(
@@ -295,11 +304,11 @@ bot.on('message', function(event) {
                     // "imageBackgroundColor": "#FFFFFF",
                     // "title": "Menu",
                     "text":  "哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式",
-                    "actions": optionsForWelcome
+                    "actions": welcomeButtons
                 }
             }
         )
-        console.log(optionsForWelcome)
+        // console.log(welcomeButtons)
     }
     else if( getUserState(curUserId) == State.start ) {
         if(categories.includes(event.message.text)){   // 如果user回覆的是categories中的其中一種
@@ -314,7 +323,7 @@ bot.on('message', function(event) {
             let curUserCategory = getUserCategory(curUserId)
             let optsForQues = quesBank[curUserCategory].content[curQuesNum].option
             for(let opt in optsForQues){
-                optionsForQuestion.push({
+                optionButtons.push({
                         "type": "message",
                         "label": optsForQues[opt],
                         "text": optsForQues[opt]
@@ -328,20 +337,12 @@ bot.on('message', function(event) {
                     "template": {
                         "type": "buttons",
                         "text":  (curQuesNum+1)+". "+quesBank[curUserCategory].content[curQuesNum].question,
-                        "actions": optionsForQuestion
+                        "actions": optionButtons
                     }   
                 }
             )
 
         } else {
-            for(let i=0;i<quesBank.length;i++){
-                optionsActions.push({
-                        "type": "message",
-                        "label": categories[i],
-                        "text": categories[i]
-                    }
-                )
-            }
             
             replyMsgs.push(
                 {
@@ -355,7 +356,7 @@ bot.on('message', function(event) {
                         // "imageBackgroundColor": "#FFFFFF",
                         // "title": "Menu",
                         "text":  "哈囉，歡迎來到用藥常識大考驗^_^，請選擇一個問題類別",
-                        "actions": optionsActions
+                        "actions": categoryButtons
                     }
                 }
             )
