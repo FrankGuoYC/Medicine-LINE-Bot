@@ -331,6 +331,7 @@ bot.on('message', function(event) {
     }    
     else if ( user.is('question') ){
         user.answerQues()
+        console.log("我是頭")
         let catIndex = categories.indexOf(user.category)
         // 判斷user前一題的答案是否正確
         let ans = quesBank[catIndex].content[user.quesNum].answer
@@ -353,7 +354,7 @@ bot.on('message', function(event) {
             // 顯示詳解
             replyMsgs.push(confirmTp(detailedExpText, "我知道了，夏禕題"))
         }
-
+        console.log("我是尾")
     } else if ( user.is('answer') ) {
         // 檢查是否題目已經出完
         if(user.quesNum >= user.quesLen){
