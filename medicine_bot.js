@@ -1,27 +1,13 @@
-// import 'jieba-js/scripts/main.js'
-// import 'jieba-js/scripts/data/dictionary.js'
-
+// require module
 let linebot = require('linebot')
 let express = require('express')
 let fs = require('fs')
 let StateMachine = require('javascript-state-machine')
 
-// nodejieba test
+// nodejieba
 const nodejieba = require('nodejieba')
-nodejieba.load({dict: './dict.txt'})
+nodejieba.load({dict: './dict.txt'})    // 初始化辭典
 console.log(nodejieba.tag('我們不禁哄堂大笑，同樣的一件衣料，每個人卻有不同的感覺。'))
-
-// // Set up requirejs for jiebajs
-// let requirejs = require('requirejs');
-
-// rqjs.requirejs(
-//     {
-//         baseUrl: '',
-//         nodeRequire: 'require'
-//     }
-// );
-
-// var mainJs = rqjs('jiebajs/scripts/main.js');
 
 // These are for the visualization of the finite state machine
 // const Viz = require('viz.js')
@@ -41,21 +27,21 @@ console.log(nodejieba.tag('我們不禁哄堂大笑，同樣的一件衣料，�
 //   })
 
 // 初始化有限狀態機
-// <待補上>
-
-// rqJs.require('jiebajs/scripts/main.js');
- 
-// _text = "這個布丁是在無聊的世界中找尋樂趣的一種不能吃的食物，喜愛動漫畫、遊戲、程式，以及跟世間脫節的生活步調。";
- 
-// dict1 = rqjs.requirejs('jiebajs/scripts/data/dictionary.js');
-// dict2 = rqjs.requirejs('jiebajs/scripts/data/dict_custom.js');
- 
-// node_jieba_parsing([dict1, dict2], _text, function (_result) {
-//     console.log(_result.join(" "));
-//     console.log("我在這裡!")
-// });
-
-
+let fsm = StateMachine.create({
+    initial: 'welcome',
+    events: [
+        { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
+        { name: 'textMode', from: 'welcome', to: 'query' },
+        { name: 'enterQuery', from: 'query', to: 'question_p' },
+        { name: 'answerQues_p', from: 'question_p', to: 'answer_p' },
+        { name: 'goToWelcome_p', from: 'answer_p', to: 'welcome' },
+        { name: 'goToQues',  from: 'chooseCategory', to: 'question' },
+        { name: 'answerQues', from: 'question', to: 'answer' },
+        { name: 'anotherQues', from: 'answer', to: 'question' },
+        { name: 'exitQues', from: 'answer', to: 'summary' },
+        { name: 'goToWelcome', from: 'summary', to: 'welcome' },
+    ]
+});
 
 
 // 載入題庫
