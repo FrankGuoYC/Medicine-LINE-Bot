@@ -228,8 +228,6 @@ function init(){
         "label": "我要問問題",
         "text": "我要問問題"
     })
-
-
 }
 
 init()  // 執行初始化
@@ -275,23 +273,20 @@ bot.on('message', function(event) {
     let curUserId = event.source.userId    // 從傳送來的訊息中擷取出userId以辨認是哪一個user所傳送的訊息
     console.log("User ID: " + curUserId)
     /***** 開始根據user id做出對應的動作 *****/
-    // 如果user還沒有在清單中，創建User物件並將他加到清單當中
-    if( !isUserJoined(curUserId) ){
-        addUser(curUserId)
+    // 如果user還沒有在清單中，創建User物件並將他加到userList當中
+    if( userList[curUserId] == undefined ){
+        userList[curUserId] = new User()
         console.log("Add user (id: "+curUserId+")")
-        console.log(users)
     }
-    // let usr = getUser(curUserId)
+    let user = userList[curUserId]
+    console.log(user)
 
-    console.log("event")
-    console.log(event)
     console.log("event message text: " + event.message.text)
     // 根據user的state來做出對應的回覆
-    // --- Declaration ---
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
     let optionButtons = [] // 用來儲存問題的選項
 
-    if( getUserState(curUserId) == State.welcome ){
+    if( user.is('welcome') ){
         replyMsgs.push(
             {
                 "type": "template",
@@ -308,9 +303,8 @@ bot.on('message', function(event) {
                 }
             }
         )
-        // console.log(welcomeButtons)
     }
-    else if( getUserState(curUserId) == State.start ) {
+    else if( user.is('start') ) {
         if(categories.includes(event.message.text)){   // 如果user回覆的是categories中的其中一種
             console.log("Categories: ")
             console.log(categories)
@@ -363,7 +357,7 @@ bot.on('message', function(event) {
 
         }
     }    
-    else if (getUserState(curUserId) == State.question){
+    else if ( user.is('question') ){
         let curQuesNum = getUserQuesNo(curUserId)
         let curUserCategory = getUserCategory(curUserId)
         // 判斷user前一題的答案是否正確
