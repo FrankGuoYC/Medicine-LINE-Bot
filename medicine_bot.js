@@ -275,7 +275,7 @@ bot.on('message', function(event) {
     /***** 開始根據user id做出對應的動作 *****/
     // 如果user還沒有在清單中，創建User物件並將他加到userList當中
     if( userList[curUserId] == undefined ){
-        userList[curUserId] = new User()
+        userList[curUserId] = new User({id: curUserId})
         console.log("Add user (id: "+curUserId+")")
     }
     let user = userList[curUserId]
