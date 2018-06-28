@@ -320,9 +320,15 @@ bot.on('message', function(event) {
             console.log("開始出第一題")
             // 開始出第一題
             let catIndex = categories.indexOf(user.category)
+            console.log("catIndex: " + catIndex)
             let quesNum = user.quesNum
+            console.log("quesNum: " + quesNum)
             let opts = quesBank[catIndex].content[quesNum].option
+            console.log("opts:")
+            console.log(opts)
             let ques = (quesNum+1)+". "+quesBank[catIndex].content[quesNum].question
+            console.log("ques:")
+            console.log(ques)
             replyMsgs.push(buttonTp(ques, opts))
         } else {
             // 停留在這個state，再次回覆chooseCategory template
