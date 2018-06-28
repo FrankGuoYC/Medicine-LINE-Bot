@@ -315,10 +315,10 @@ bot.on('message', function(event) {
             user.goToQues()
             user.initGameData()
             // 開始出第一題
-            let cat = user.category
+            let catIndex = categories.indexOf(user.category)
             let quesNum = user.quesNum
-            let opts = quesBank[cat].content[quesNum].option
-            let ques = (curQuesNum+1)+". "+quesBank[curUserCategory].content[curQuesNum].question
+            let opts = quesBank[catIndex].content[quesNum].option
+            let ques = (quesNum+1)+". "+quesBank[catIndex].content[quesNum].question
             replyMsgs.push(buttonTp(ques, opts))
         } else {
             // 停留在這個state，再次回覆chooseCategory template
@@ -327,12 +327,11 @@ bot.on('message', function(event) {
     }    
     else if ( user.is('question') ){
         user.answerQues()
-        let cat = user.category
-        let quesNum = user.quesNum
+        let catIndex = categories.indexOf(user.category)
         // 判斷user前一題的答案是否正確
-        let ans = quesBank[cat].content[quesNum].answer
-        let ansText = quesBank[cat].content[quesNum].option[ans]
-        let detailedExpText = quesBank[cat].content[quesNum].detailed_exp
+        let ans = quesBank[catIndex].content[user.quesNum].answer
+        let ansText = quesBank[catIndex].content[user.quesNum].option[ans]
+        let detailedExpText = quesBank[catIndex].content[user.quesNum].detailed_exp
         if(userMsg == ansText) {
             // 答對了!
             user.correctAnsNum++   // 答對題數+1，
@@ -347,28 +346,25 @@ bot.on('message', function(event) {
         replyMsgs.push(textTp(detailedExpText))
         user.quesNum++  // 答題數+1
 
-        console.log(curQuesNum)
-        console.log(quesBank[curUserCategory].content.length)
-        incrementUserQuesNo(curUserId, curQuesNum)
         // 檢查是否題目已經出完
-        if(curQuesNum >= getUserQuesLen(curUserId)){
-            // 顯示完成遊戲訊息
+        if(user.quesNum >= user.quesLen){
+            // 使用者已完成題目
+            user.exitQues()
             // 計算分數
-            // 將User狀態設回start
-            setUserState(curUserId, State.start)
-            let score = Math.round( (getUserCorrectAnsNum(curUserId) / getUserQuesNo(curUserId) ) * 100 )
-            setUserScore(curUserId, score)
-            replyMsgs.push( textTp("恭喜您完成了本遊戲! 您的得分為" + getUserScore(curUserId) + "分") )
+            user.score = Math.round( user.correctAnsNum / user.quesNum ) * 100 
+            replyMsgs.push( textTp("恭喜您完成了本遊戲! 您的得分為" + user.score + "分") )
             replyMsgs.push( confirmTp("是否再玩一次呢?", ["是","好"]) )
         } else {
-            // 顯示下一題的內容
-            let ques = (curQuesNum+1)+". "+quesBank[curUserCategory].content[curQuesNum].question
-            let opts = quesBank[curUserCategory].content[curQuesNum].option
-
+            // 尚未完成，繼續顯示下一題的template供使用者回覆
+            user.anotherQues()
+            let ques = (user.quesNum+1)+". "+quesBank[catIndex].content[user.quesNum].question
+            let opts = quesBank[catIndex].content[user.quesNum].option
             replyMsgs.push( buttonTp(ques, opts) )
         }
+    } else if ( user.is('summary') ){
+        user.goToWelcome()
+        replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
     }
-
     // 最後將一個或多個訊息送出
     event.reply(replyMsgs)
 });
