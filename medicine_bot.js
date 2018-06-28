@@ -292,7 +292,7 @@ bot.on('message', function(event) {
     console.log("User message text: " + userMsg)
     // 根據user的state來做出對應的回覆
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
-    if( userMsg == 'H' || 'h'){
+    if( userMsg.toLowerCase() == 'h'){
         user.goto('welcome')
     }
     if( user.is('welcome') ){
