@@ -346,14 +346,14 @@ bot.on('message', function(event) {
         }
 
         user.quesNum++  // 答題數+1
-        if(user.quesNum >= user.quesLen){
-            // 顯示詳解，不論對錯都會顯示詳解
-            replyMsgs.push(confirmTp(detailedExpText, ""))
+        if(user.quesNum >= user.quesLen){   // 已答完所有題目
+            // 顯示詳解
+            replyMsgs.push(confirmTp(detailedExpText, "我知道了，查看成績"))
         } else {
             // 顯示詳解
-            replyMsgs.push(confirmTp(detailedExpText, ""))
+            replyMsgs.push(confirmTp(detailedExpText, "我知道了，夏禕題"))
         }
-        
+
     } else if ( user.is('answer') ) {
         // 檢查是否題目已經出完
         if(user.quesNum >= user.quesLen){
