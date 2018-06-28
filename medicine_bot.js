@@ -279,8 +279,8 @@ bot.on('message', function(event) {
                 }
             }
         )
+        console.log(optionsForWelcome)
     }
-
     else if( getUserState(curUserId) == State.start ) {
         if(options.includes(event.message.text)){   // 如果user回覆的是四種題型的其中一種
             setUserCategory(curUserId, options.indexOf(event.message.text))
