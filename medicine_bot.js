@@ -5,13 +5,23 @@ let linebot = require('linebot')
 let express = require('express')
 let fs = require('fs')
 let StateMachine = require('javascript-state-machine')
-var requirejs = require('requirejs').requirejs(
-    {
-        baseUrl: '',
-        nodeRequire: 'require'
-    }
-);
-var mainJs = requirejs('jiebajs/scripts/main.js');
+
+// nodejieba test
+const nodejieba = require('nodejieba')
+nodejieba.load({dict: './dict.txt'})
+console.log(nodejieba.cut('我們不禁哄堂大笑，同樣的一件衣料，每個人卻有不同的感覺。'))
+
+// // Set up requirejs for jiebajs
+// let requirejs = require('requirejs');
+
+// rqjs.requirejs(
+//     {
+//         baseUrl: '',
+//         nodeRequire: 'require'
+//     }
+// );
+
+// var mainJs = rqjs('jiebajs/scripts/main.js');
 
 // These are for the visualization of the finite state machine
 // const Viz = require('viz.js')
@@ -35,15 +45,15 @@ var mainJs = requirejs('jiebajs/scripts/main.js');
 
 // rqJs.require('jiebajs/scripts/main.js');
  
-_text = "這個布丁是在無聊的世界中找尋樂趣的一種不能吃的食物，喜愛動漫畫、遊戲、程式，以及跟世間脫節的生活步調。";
+// _text = "這個布丁是在無聊的世界中找尋樂趣的一種不能吃的食物，喜愛動漫畫、遊戲、程式，以及跟世間脫節的生活步調。";
  
-dict1 = requirejs('jiebajs/scripts/data/dictionary.js');
-dict2 = requirejs('jiebajs/scripts/data/dict_custom.js');
+// dict1 = rqjs.requirejs('jiebajs/scripts/data/dictionary.js');
+// dict2 = rqjs.requirejs('jiebajs/scripts/data/dict_custom.js');
  
-node_jieba_parsing([dict1, dict2], _text, function (_result) {
-    console.log(_result.join(" "));
-    console.log("我在這裡!")
-});
+// node_jieba_parsing([dict1, dict2], _text, function (_result) {
+//     console.log(_result.join(" "));
+//     console.log("我在這裡!")
+// });
 
 
 
