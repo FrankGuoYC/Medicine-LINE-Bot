@@ -317,6 +317,7 @@ bot.on('message', function(event) {
             user.category = userMsg
             user.goToQues()
             user.initGameData()
+            console.log("開始出第一題")
             // 開始出第一題
             let catIndex = categories.indexOf(user.category)
             let quesNum = user.quesNum
