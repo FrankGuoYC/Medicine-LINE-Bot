@@ -1,12 +1,51 @@
+"use strict";
+
 // require module
 let linebot = require('linebot')
 let express = require('express')
 let fs = require('fs')
 let StateMachine = require('javascript-state-machine')
 
-// nodejieba
+// 嘗試看看ES6風格的class宣告
+class User extends StateMachine {
+    constructor(params){
+        // Use super() to call parent's constructor first
+        super({
+            init: 'welcome',
+            transitions: [
+                { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
+                { name: 'textMode', from: 'welcome', to: 'query' },
+                { name: 'enterQuery', from: 'query', to: 'question_p' },
+                { name: 'answerQues_p', from: 'question_p', to: 'answer_p' },
+                { name: 'goToWelcome_p', from: 'answer_p', to: 'welcome' },
+                { name: 'goToQues',  from: 'chooseCategory', to: 'question' },
+                { name: 'answerQues', from: 'question', to: 'answer' },
+                { name: 'anotherQues', from: 'answer', to: 'question' },
+                { name: 'exitQues', from: 'answer', to: 'summary' },
+                { name: 'goToWelcome', from: 'summary', to: 'welcome' },
+            ]
+        })
+        // Then define child's properties
+        this.id = params.id || undefined
+        this.name = params.name || undefined
+        this.score = params.score || 0
+        this.category =  params.category || undefined
+        this.quesNum = params.quesNum || undefined
+        this.correctAnsNum = params.correctAnsNum || undefined
+        this.quesLen = params.quesLen || 5
+    }
+
+    run() {
+        console.log(`${this.name} is running!`)
+    }
+}
+
+let userTest = new User({name: "Frank"})
+userTest.run()
+
+// require nodejieba
 const nodejieba = require('nodejieba')
-nodejieba.load({dict: './dict.txt'})    // 初始化辭典
+nodejieba.load({dict: './dict.txt'})    // 使用繁體中文詞典進行初始化
 // 測試parse結果
 let jiebaParsingResult = nodejieba.cut('電視廣告藥品好像很有效，直接買不用查證')
 console.log(jiebaParsingResult)
@@ -29,24 +68,6 @@ console.log(jiebaParsingResult)
 //     // Possibly display the error
 //     console.error(error);
 //   })
-
-// 初始化有限狀態機
-let fsm = new StateMachine({
-    init: 'welcome',
-    transitions: [
-        { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
-        { name: 'textMode', from: 'welcome', to: 'query' },
-        { name: 'enterQuery', from: 'query', to: 'question_p' },
-        { name: 'answerQues_p', from: 'question_p', to: 'answer_p' },
-        { name: 'goToWelcome_p', from: 'answer_p', to: 'welcome' },
-        { name: 'goToQues',  from: 'chooseCategory', to: 'question' },
-        { name: 'answerQues', from: 'question', to: 'answer' },
-        { name: 'anotherQues', from: 'answer', to: 'question' },
-        { name: 'exitQues', from: 'answer', to: 'summary' },
-        { name: 'goToWelcome', from: 'summary', to: 'welcome' },
-    ]
-});
-
 
 // 載入題庫
 let quesBank = null
@@ -78,9 +99,9 @@ try {
 //     console.log("File has been saved!");
 // }); 
 
-// 儲存使用者變數
-// 先用簡單一點的寫法，有時間再改成好一點的寫法(例如寫成一個Object)
-let users = {}
+let users = {}  // 先暫時用一個object當作list存users
+let userList = []  // 先暫時用一個object當作list存users
+
 const State = {
     welcome: "welcome",
     start: "start",
@@ -91,21 +112,6 @@ const State = {
 function addUser(usrId){
     // Create and initiate a user and store it into object 'users'
     users[usrId] = {
-        fsm: new StateMachine({
-            initial: 'welcome',
-            events: [
-                { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
-                { name: 'textMode', from: 'welcome', to: 'query' },
-                { name: 'enterQuery', from: 'query', to: 'question_p' },
-                { name: 'answerQues_p', from: 'question_p', to: 'answer_p' },
-                { name: 'goToWelcome_p', from: 'answer_p', to: 'welcome' },
-                { name: 'goToQues',  from: 'chooseCategory', to: 'question' },
-                { name: 'answerQues', from: 'question', to: 'answer' },
-                { name: 'anotherQues', from: 'answer', to: 'question' },
-                { name: 'exitQues', from: 'answer', to: 'summary' },
-                { name: 'goToWelcome', from: 'summary', to: 'welcome' },
-            ]
-        }),
         state: State.welcome,
         score: undefined,
         category: undefined,
@@ -113,6 +119,7 @@ function addUser(usrId){
         correctAnsNum: undefined,
         quesLen: 5
     }
+    userList[usrId] = new User({id: usrId})
 }
 
 function getUser(usrId){
@@ -190,29 +197,31 @@ function removeUser(usrId){
     delete users[usrId]
 }
 
-// 初始化回復button template所需用到的options
-let categories = []
-let optionsForWelcome = []
-function initOptions(){
-    // --- categories initialization ---
+// 初始化回覆使用者button template的時候所需用到的options
+let categories = [] // 用於詢問使用者要使用哪一領域的問題
+let optionsForWelcome = []  // 用於歡迎畫面的按鈕
+
+// 初始化一些變數，例如: button template的選項內容
+function init(){
+    // init categories
     for(let i=0;i<quesBank.length;i++){
         categories.push(quesBank[i].category)
     }
-    categories.push("我要問問題")   // 新增第五個類別(選項)，讓使用者能直接輸入文字問問題
 
+    // init optionsForWelcome
     optionsForWelcome.push({
         "type": "message",
-        "label": "Button Mode",
-        "text": "Button Mode"
+        "label": "我要玩遊戲",
+        "text": "我要玩遊戲"
     })
     optionsForWelcome.push({
         "type": "message",
-        "label": "Text Mode",
-        "text": "Text Mode"
+        "label": "我要問問題",
+        "text": "我要問問題"
     })
 }
 
-initOptions()
+init()  // 執行初始化
 
 function find(jiebaResult){
     let infoToReturn = {
@@ -255,7 +264,7 @@ bot.on('message', function(event) {
     let curUserId = event.source.userId    // 從傳送來的訊息中擷取出userId以辨認是哪一個user所傳送的訊息
     console.log("User ID: " + curUserId)
     /***** 開始根據user id做出對應的動作 *****/
-    // 如果user還沒有在清單中，將他加到清單當中
+    // 如果user還沒有在清單中，創建User物件並將他加到清單當中
     if( !isUserJoined(curUserId) ){
         addUser(curUserId)
         console.log("Add user (id: "+curUserId+")")
@@ -269,6 +278,7 @@ bot.on('message', function(event) {
     // 根據user的state來做出對應的回覆
     // --- Declaration ---
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
+
     let optionsForQuestion = []
     let optionsActions = []
 
