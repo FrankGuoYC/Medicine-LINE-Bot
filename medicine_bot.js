@@ -198,7 +198,16 @@ function initOptions(){
     for(let i=0;i<quesBank.length;i++){
         options.push(quesBank[i].category)
     }
-    optionsForWelcome = ["Button Mode","Text Mode"]
+    optionsForWelcome.push({
+        "type": "message",
+        "label": "Button Mode",
+        "text": "Button Mode"
+    })
+    optionsForWelcome.push({
+        "type": "message",
+        "label": "Text Mode",
+        "text": "Text Mode"
+    })
 }
 
 initOptions()
