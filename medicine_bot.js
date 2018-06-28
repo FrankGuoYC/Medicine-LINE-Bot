@@ -320,15 +320,9 @@ bot.on('message', function(event) {
             console.log("開始出第一題")
             // 開始出第一題
             let catIndex = categories.indexOf(user.category)
-            console.log("catIndex: " + catIndex)
             let quesNum = user.quesNum
-            console.log("quesNum: " + quesNum)
             let opts = quesBank[catIndex].content[quesNum].option
-            console.log("opts:")
-            console.log(opts)
             let ques = (quesNum+1)+". "+quesBank[catIndex].content[quesNum].question
-            console.log("ques:")
-            console.log(ques)
             replyMsgs.push(buttonTp(ques, opts))
         } else {
             // 停留在這個state，再次回覆chooseCategory template
@@ -351,10 +345,16 @@ bot.on('message', function(event) {
             replyMsgs.push(textTp("答錯了，正確答案為: \"" + ans +"\""))
         }
 
-        // 顯示詳解，不論對錯都會顯示詳解
-        replyMsgs.push(textTp(detailedExpText))
         user.quesNum++  // 答題數+1
-
+        if(user.quesNum >= user.quesLen){
+            // 顯示詳解，不論對錯都會顯示詳解
+            replyMsgs.push(confirmTp(detailedExpText, ""))
+        } else {
+            // 顯示詳解
+            replyMsgs.push(confirmTp(detailedExpText, ""))
+        }
+        
+    } else if ( user.is('answer') ) {
         // 檢查是否題目已經出完
         if(user.quesNum >= user.quesLen){
             // 使用者已完成題目
