@@ -81,7 +81,7 @@ try {
 // 儲存使用者變數
 // 先用簡單一點的寫法，有時間再改成好一點的寫法(例如寫成一個Object)
 let users = {}
-let State = {
+const State = {
     welcome: "welcome",
     start: "start",
     chooseCategory: "chooseCategory",
@@ -262,7 +262,7 @@ bot.on('message', function(event) {
     let optionsActions = []
 
     if( getUserState(curUserId) == State.welcome ){
-
+        console.log("Can you see me ???????")
         replyMsgs.push(
             {
                 "type": "template",
