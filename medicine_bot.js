@@ -224,7 +224,7 @@ function confirmTp(text, actions){
 
 // 初始化回覆使用者button template的時候所需用到的options
 let categories = [] // 用於詢問使用者要使用哪一領域的問題
-let welcomeButtons = []  // 用於歡迎畫面的按鈕
+let modes = []  // 用於歡迎畫面的按鈕
 
 // 初始化一些變數，例如: button template的選項內容
 function init(){
@@ -232,8 +232,8 @@ function init(){
     for(let i=0;i<quesBank.length;i++){
         categories.push(quesBank[i].category)
     }
-    // init welcomeButtons
-    welcomeButtons = ['我要玩遊戲','我要問問題']
+    // init modes
+    modes = ['我要玩遊戲','我要問問題']
 }
 
 init()  // 執行初始化
@@ -293,7 +293,20 @@ bot.on('message', function(event) {
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
 
     if( user.is('welcome') ){
-        replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", welcomeButtons) )
+        if(modes.includes(userMsg)){
+            if(userMsg == "我要玩遊戲"){
+                user.buttonMode()
+                replyMsgs.push(buttonTp("請選擇一個問題類別", categories))
+            } else if(userMsg == "我要問問題"){
+                user.textMode()
+                replyMsgs.push(textTp("請輸入你想知道哪方面的知識，系統會根據您的輸入回應最匹配的問題~"))
+            }
+        } else {
+            replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
+        }
+    }
+    else if( user.is('query') ){
+        console.log("HaHaHa")
     }
     else if( user.is('chooseCategory') ) {
         if(categories.includes(userMsg)){   // 如果user回覆的是categories中的其中一種
@@ -309,7 +322,7 @@ bot.on('message', function(event) {
             replyMsgs.push(buttonTp(ques, opts))
         } else {
             // 停留在這個state，再次回覆chooseCategory template
-            replyMsgs.push(buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇一個問題類別", categories))
+            replyMsgs.push(buttonTp("請選擇一個問題類別", categories))
         }
     }    
     else if ( user.is('question') ){
