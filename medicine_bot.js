@@ -38,6 +38,12 @@ class User extends StateMachine {
     run() {
         console.log(`${this.name} is running!`)
     }
+
+    initGameData() {
+        this.score = 0
+        this.quesNum = 0
+        this.correctAnsNum = 0
+    }
 }
 
 let userTest = new User({name: "Frank"})
@@ -99,28 +105,8 @@ try {
 //     console.log("File has been saved!");
 // }); 
 
-let users = {}  // 先暫時用一個object當作list存users
-let userList = []  // 先暫時用一個object當作list存users
+let userList = {}  // 先暫時用一個object當作list存users
 
-const State = {
-    welcome: "welcome",
-    start: "start",
-    chooseCategory: "chooseCategory",
-    question: "question"
-}
-
-function addUser(usrId){
-    // Create and initiate a user and store it into object 'users'
-    users[usrId] = {
-        state: State.welcome,
-        score: undefined,
-        category: undefined,
-        quesNo: undefined,
-        correctAnsNum: undefined,
-        quesLen: 5
-    }
-    userList[usrId] = new User({id: usrId})
-}
 
 function getUser(usrId){
     return users[usrId]
@@ -179,22 +165,49 @@ function getUserQuesLen(usrId){
     return users[usrId].quesLen
 }
 
-function setUserQuesLen(usrId, quesLen){
-    users[usrId].quesLen = quesLen
+function buttonTemplate(text, actions){
+    let actionArr = []
+    for(let i=0;i<actions.length;i++){
+        actionArr.push({
+            "type": "message",
+            "label": actions[i],
+            "text": actions[i]
+        })
+    }
+    return {
+        "type": "template",
+        "altText": "This is a buttons template",
+        "template": {
+            "type": "buttons",
+            // "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
+            // "imageAspectRatio": "rectangle",
+            // "imageSize": "cover",
+            // "imageBackgroundColor": "#FFFFFF",
+            // "title": "Menu",
+            "text":  text,
+            "actions": actionArr
+        }
+    }
 }
 
-function initUserGameData(usrId){
-    setUserScore(usrId, 0)
-    setUserQuesNo(usrId, 0)
-    setUserCorrectAnsNum(usrId, 0)
-}
-
-function isUserJoined(usrId){
-    if(usrId in users) return true
-    else return false
-}
-function removeUser(usrId){
-    delete users[usrId]
+function confirmTemplate(text, actions){
+    let actionArr = []
+    for(let i=0;i<actions.length;i++){
+        actionArr.push({
+            "type": "message",
+            "label": actions[i],
+            "text": actions[i]
+        })
+    }
+    return {
+        "type": "template",
+        "altText": "this is a confirm template",
+        "template": {
+            "type": "confirm",
+            "text": text,
+            "actions": actionArr
+        }
+    }
 }
 
 // 初始化回覆使用者button template的時候所需用到的options
@@ -218,16 +231,17 @@ function init(){
         )
     }
     // init welcomeButtons
-    welcomeButtons.push({
-        "type": "message",
-        "label": "我要玩遊戲",
-        "text": "我要玩遊戲"
-    })
-    welcomeButtons.push({
-        "type": "message",
-        "label": "我要問問題",
-        "text": "我要問問題"
-    })
+    welcomeButtons = ['我要玩遊戲','我要問問題']
+    // welcomeButtons.push({
+    //     "type": "message",
+    //     "label": "我要玩遊戲",
+    //     "text": "我要玩遊戲"
+    // })
+    // welcomeButtons.push({
+    //     "type": "message",
+    //     "label": "我要問問題",
+    //     "text": "我要問問題"
+    // })
 }
 
 init()  // 執行初始化
@@ -279,43 +293,43 @@ bot.on('message', function(event) {
         console.log("Add user (id: "+curUserId+")")
     }
     let user = userList[curUserId]
+    let userMsg = event.message.text
     console.log(user)
 
-    console.log("event message text: " + event.message.text)
+    console.log("User message text: " + userMsg)
     // 根據user的state來做出對應的回覆
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
     let optionButtons = [] // 用來儲存問題的選項
 
     if( user.is('welcome') ){
         replyMsgs.push(
-            {
-                "type": "template",
-                "altText": "This is a buttons template",
-                "template": {
-                    "type": "buttons",
-                    // "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
-                    // "imageAspectRatio": "rectangle",
-                    // "imageSize": "cover",
-                    // "imageBackgroundColor": "#FFFFFF",
-                    // "title": "Menu",
-                    "text":  "哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式",
-                    "actions": welcomeButtons
-                }
-            }
+            buttonTemplate("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", welcomeButtons)
+            // {
+            //     "type": "template",
+            //     "altText": "This is a buttons template",
+            //     "template": {
+            //         "type": "buttons",
+            //         // "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
+            //         // "imageAspectRatio": "rectangle",
+            //         // "imageSize": "cover",
+            //         // "imageBackgroundColor": "#FFFFFF",
+            //         // "title": "Menu",
+            //         "text":  "哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式",
+            //         "actions": welcomeButtons
+            //     }
+            // }
         )
     }
-    else if( user.is('start') ) {
-        if(categories.includes(event.message.text)){   // 如果user回覆的是categories中的其中一種
-            console.log("Categories: ")
-            console.log(categories)
-            setUserCategory(curUserId, categories.indexOf(event.message.text))
-            setUserState(curUserId, State.question)
-            // 初始化
-            initUserGameData(curUserId)
+    else if( user.is('chooseCategory') ) {
+        if(categories.includes(userMsg)){   // 如果user回覆的是categories中的其中一種
+            // console.log("Categories: " + categories)
+            user.category = userMsg
+            user.gotoQues()
+            user.initGameData()
             // 開始出第一題
-            let curQuesNum = getUserQuesNo(curUserId)
-            let curUserCategory = getUserCategory(curUserId)
-            let optsForQues = quesBank[curUserCategory].content[curQuesNum].option
+            let cat = user.category
+            let quesNum = user.quesNum
+            let optsForQues = quesBank[cat].content[quesNum].option
             for(let opt in optsForQues){
                 optionButtons.push({
                         "type": "message",
@@ -337,7 +351,7 @@ bot.on('message', function(event) {
             )
 
         } else {
-            
+            // 停留在這個state，再次回覆chooseCategory template
             replyMsgs.push(
                 {
                     "type": "template",
@@ -358,19 +372,21 @@ bot.on('message', function(event) {
         }
     }    
     else if ( user.is('question') ){
-        let curQuesNum = getUserQuesNo(curUserId)
-        let curUserCategory = getUserCategory(curUserId)
+        user.answerQues()
+        let cat = user.category
+        let quesNum = user.quesNum
         // 判斷user前一題的答案是否正確
-        let answer = quesBank[curUserCategory].content[curQuesNum].answer
-        let answerText = quesBank[curUserCategory].content[curQuesNum].option[answer]
-        let detailedExpText = quesBank[curUserCategory].content[curQuesNum].detailed_exp
-        if(event.message.text == answerText) {
-            incrementUserCorrectAnsNum(curUserId)   // 答對題數+1，
-            // 答對，顯示正確訊息
+        let ans = quesBank[cat].content[quesNum].answer
+        let ansText = quesBank[cat].content[quesNum].option[ans]
+        let detailedExpText = quesBank[cat].content[quesNum].detailed_exp
+        if(userMsg == ansText) {
+            // 答對了!
+            user.correctAnsNum++   // 答對題數+1，
+            // 顯示正確訊息
             replyMsgs.push(
                 {
                     "type": "text",
-                    // "label": "答對了!",
+                    "label": "答對了!",
                     "text": "答對了!"
                 }
             )
@@ -379,12 +395,13 @@ bot.on('message', function(event) {
             replyMsgs.push(
                 {
                     "type": "text",
-                    "label": "答錯了，正確答案為: \"" + answerText +"\"",
-                    "text": "答錯了，正確答案為: \"" + answerText +"\""
+                    "label": "答錯了，正確答案為: \"" + ansText +"\"",
+                    "text": "答錯了，正確答案為: \"" + ansText +"\""
                 }
             )
         }
-        // 顯示詳解
+
+        // 顯示詳解，不論對錯都會顯示詳解
         replyMsgs.push(
             {
                 "type": "text",
@@ -392,9 +409,12 @@ bot.on('message', function(event) {
                 "text": detailedExpText
             }
         )
+        user.quesNum++  // 答題數+1
 
-        // 下一題
-        curQuesNum++
+
+
+
+
         console.log(curQuesNum)
         console.log(quesBank[curUserCategory].content.length)
         incrementUserQuesNo(curUserId, curQuesNum)
