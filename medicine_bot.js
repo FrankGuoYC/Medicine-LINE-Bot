@@ -109,63 +109,6 @@ try {
 let userList = {}  // 先暫時用一個object當作list存users
 
 
-function getUser(usrId){
-    return users[usrId]
-}
-
-function getUserState(usrId){
-    return users[usrId].state
-}
-
-function setUserState(usrId, stat){
-    users[usrId].state = stat
-}
-
-function getUserCategory(usrId){
-    return users[usrId].category
-}
-
-function setUserCategory(usrId, cat){
-    users[usrId].category = cat
-}
-
-
-function getUserScore(usrId){
-    return users[usrId].score
-}
-
-function setUserScore(usrId, score){
-    users[usrId].score = score
-}
-
-function getUserQuesNo(usrId){
-    return users[usrId].quesNo
-}
-
-function setUserQuesNo(usrId, qno){
-    users[usrId].quesNo = qno
-}
-
-function incrementUserQuesNo(usrId){
-    users[usrId].quesNo++
-}
-
-function getUserCorrectAnsNum(usrId){
-    return users[usrId].correctAnsNum
-}
-
-function setUserCorrectAnsNum(usrId, cno){
-    users[usrId].correctAnsNum = cno
-}
-
-function incrementUserCorrectAnsNum(usrId){
-    users[usrId].correctAnsNum++
-}
-
-function getUserQuesLen(usrId){
-    return users[usrId].quesLen
-}
-
 function textTp(text){
     return {
         "type": "text",
@@ -362,6 +305,8 @@ bot.on('message', function(event) {
             // 使用者已完成題目
             user.exitQues()
             // 計算分數
+            console.log("user correct Ans Num: " + user.correctAnsNum)
+            console.log("user ques num: " + user.quesNum)
             user.score = Math.round( user.correctAnsNum / user.quesNum ) * 100 
             replyMsgs.push( textTp("恭喜您完成了本遊戲! 您的得分為" + user.score + "分") )
             replyMsgs.push( confirmTp("是否再玩一次呢?", ["是","好"]) )
