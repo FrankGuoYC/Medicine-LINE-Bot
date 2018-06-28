@@ -9,7 +9,7 @@ let StateMachine = require('javascript-state-machine')
 // nodejieba test
 const nodejieba = require('nodejieba')
 nodejieba.load({dict: './dict.txt'})
-console.log(nodejieba.cut('我們不禁哄堂大笑，同樣的一件衣料，每個人卻有不同的感覺。'))
+console.log(nodejieba.tag('我們不禁哄堂大笑，同樣的一件衣料，每個人卻有不同的感覺。'))
 
 // // Set up requirejs for jiebajs
 // let requirejs = require('requirejs');
