@@ -104,7 +104,7 @@ function addUser(usrId){
                 { name: 'goToWelcome', from: 'summary', to: 'welcome' },
             ]
         }),
-        state: State.start,
+        state: State.welcome,
         score: undefined,
         category: undefined,
         quesNo: undefined,
@@ -188,6 +188,19 @@ function removeUser(usrId){
     delete users[usrId]
 }
 
+// 初始化回復button template所需用到的options
+let options = []
+let optionsForWelcome = []
+function initOptions(){
+    // --- Initialize ---
+    for(let i=0;i<quesBank.length;i++){
+        options.push(quesBank[i].category)
+    }
+    optionsForWelcome = ["Button Mode","Text Mode"]
+}
+
+initOptions()
+
 
 
 let bot = linebot({
@@ -214,16 +227,27 @@ bot.on('message', function(event) {
     // 根據user的state來做出對應的回覆
     // --- Declaration ---
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
-    let options = []
     let optionsForQuestion = []
     let optionsActions = []
 
-    // --- Initialize ---
-    for(let i=0;i<quesBank.length;i++){
-        options.push(quesBank[i].category)
-    }
     if( getUserState(curUserId) == State.welcome ){
 
+        replyMsgs.push(
+            {
+                "type": "template",
+                "altText": "This is a buttons template",
+                "template": {
+                    "type": "buttons",
+                    // "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
+                    // "imageAspectRatio": "rectangle",
+                    // "imageSize": "cover",
+                    // "imageBackgroundColor": "#FFFFFF",
+                    // "title": "Menu",
+                    "text":  "哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式",
+                    "actions": optionsForWelcome
+                }
+            }
+        )
     }
 
     else if( getUserState(curUserId) == State.start ) {
