@@ -307,7 +307,7 @@ bot.on('message', function(event) {
             // 計算分數
             console.log("user correct Ans Num: " + user.correctAnsNum)
             console.log("user ques num: " + user.quesNum)
-            user.score = Math.round( user.correctAnsNum / user.quesNum ) * 100 
+            user.score = Math.round( user.correctAnsNum.toFixed(2) / user.quesNum ) * 100 
             replyMsgs.push( textTp("恭喜您完成了本遊戲! 您的得分為" + user.score + "分") )
             replyMsgs.push( confirmTp("是否再玩一次呢?", ["是","好"]) )
         } else {
