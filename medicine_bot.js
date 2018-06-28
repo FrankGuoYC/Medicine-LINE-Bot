@@ -347,12 +347,13 @@ bot.on('message', function(event) {
         }
 
         user.quesNum++  // 答題數+1
+        replyMsgs.push(textTp(detailedExpText))
         if(user.quesNum >= user.quesLen){   // 已答完所有題目
             // 顯示詳解
-            replyMsgs.push(buttonTp(detailedExpText, ["我知道了，查看成績"]))
+            replyMsgs.push(buttonTp("", ["我知道了，查看成績"]))
         } else {
             // 顯示詳解
-            replyMsgs.push(buttonTp(detailedExpText, ["我知道了，下一題"]))
+            replyMsgs.push(buttonTp("", ["我知道了，下一題"]))
         }
         console.log("我是尾")
     } else if ( user.is('answer') ) {
