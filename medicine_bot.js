@@ -356,6 +356,7 @@ bot.on('message', function(event) {
         }
         console.log("我是尾")
     } else if ( user.is('answer') ) {
+        let catIndex = categories.indexOf(user.category)
         // 檢查是否題目已經出完
         if(user.quesNum >= user.quesLen){
             // 使用者已完成題目
