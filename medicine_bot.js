@@ -106,7 +106,7 @@ function addUser(usrId){
                 { name: 'goToWelcome', from: 'summary', to: 'welcome' },
             ]
         }),
-        state: State.start,
+        state: State.welcome,
         score: undefined,
         category: undefined,
         quesNo: undefined,
