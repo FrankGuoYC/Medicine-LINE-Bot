@@ -23,6 +23,7 @@ class User extends StateMachine {
                 { name: 'anotherQues', from: 'answer', to: 'question' },
                 { name: 'exitQues', from: 'answer', to: 'summary' },
                 { name: 'goToWelcome', from: 'summary', to: 'welcome' },
+                { name: 'goto', from: '*', to: function(s) { return s } }
             ]
         })
         // Then define child's properties
@@ -291,7 +292,9 @@ bot.on('message', function(event) {
     console.log("User message text: " + userMsg)
     // 根據user的state來做出對應的回覆
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
-
+    if( userMsg == 'H' || 'h'){
+        user.goto('welcome')
+    }
     if( user.is('welcome') ){
         if(modes.includes(userMsg)){
             if(userMsg == "我要玩遊戲"){
