@@ -106,7 +106,7 @@ function addUser(usrId){
                 { name: 'goToWelcome', from: 'summary', to: 'welcome' },
             ]
         }),
-        state: State.welcome,
+        state: State.start,
         score: undefined,
         category: undefined,
         quesNo: undefined,
@@ -191,13 +191,15 @@ function removeUser(usrId){
 }
 
 // 初始化回復button template所需用到的options
-let options = []
+let categories = []
 let optionsForWelcome = []
 function initOptions(){
-    // --- Initialize ---
+    // --- categories initialization ---
     for(let i=0;i<quesBank.length;i++){
-        options.push(quesBank[i].category)
+        categories.push(quesBank[i].category)
     }
+    categories.push("我要問問題")   // 新增第五個類別(選項)，讓使用者能直接輸入文字問問題
+
     optionsForWelcome.push({
         "type": "message",
         "label": "Button Mode",
@@ -271,7 +273,6 @@ bot.on('message', function(event) {
     let optionsActions = []
 
     if( getUserState(curUserId) == State.welcome ){
-        console.log("Can you see me ???????")
         replyMsgs.push(
             {
                 "type": "template",
@@ -291,8 +292,8 @@ bot.on('message', function(event) {
         console.log(optionsForWelcome)
     }
     else if( getUserState(curUserId) == State.start ) {
-        if(options.includes(event.message.text)){   // 如果user回覆的是四種題型的其中一種
-            setUserCategory(curUserId, options.indexOf(event.message.text))
+        if(categories.includes(event.message.text)){   // 如果user回覆的是categories中的其中一種
+            setUserCategory(curUserId, categories.indexOf(event.message.text))
             setUserState(curUserId, State.question)
             // 初始化
             initUserGameData(curUserId)
@@ -324,8 +325,8 @@ bot.on('message', function(event) {
             for(let i=0;i<quesBank.length;i++){
                 optionsActions.push({
                         "type": "message",
-                        "label": options[i],
-                        "text": options[i]
+                        "label": categories[i],
+                        "text": categories[i]
                     }
                 )
             }
