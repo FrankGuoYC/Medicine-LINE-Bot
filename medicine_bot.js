@@ -312,7 +312,7 @@ bot.on('message', function(event) {
         if(categories.includes(userMsg)){   // 如果user回覆的是categories中的其中一種
             // console.log("Categories: " + categories)
             user.category = userMsg
-            user.gotoQues()
+            user.goToQues()
             user.initGameData()
             // 開始出第一題
             let cat = user.category
