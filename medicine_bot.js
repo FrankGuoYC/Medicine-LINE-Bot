@@ -7,7 +7,9 @@ let StateMachine = require('javascript-state-machine')
 // nodejieba
 const nodejieba = require('nodejieba')
 nodejieba.load({dict: './dict.txt'})    // 初始化辭典
-console.log(nodejieba.tag('我們不禁哄堂大笑，同樣的一件衣料，每個人卻有不同的感覺。'))
+// 測試parse結果
+console.log(nodejieba.tag('我昨天在地下電台買了一罐藥，我想吃藥'))
+
 
 // These are for the visualization of the finite state machine
 // const Viz = require('viz.js')
@@ -28,8 +30,8 @@ console.log(nodejieba.tag('我們不禁哄堂大笑，同樣的一件衣料，�
 
 // 初始化有限狀態機
 let fsm = new StateMachine({
-    initial: 'welcome',
-    events: [
+    init: 'welcome',
+    transitions: [
         { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
         { name: 'textMode', from: 'welcome', to: 'query' },
         { name: 'enterQuery', from: 'query', to: 'question_p' },
@@ -53,6 +55,27 @@ try {
     console.log('Error:', e.stack)
 }
 
+// 測試quesBank每個問題的斷詞結果
+let outputContent = []
+for ( let i=0;i<quesBank.length; i++ ){
+    let quesCategory = quesBank[i]
+    console.log("quesCategory: "+quesCategory.category)
+    for(let k=0; k<quesCategory.content.length; k++ ){
+        let ques = quesCategory.content[k]
+        console.log("question " + (k+1))
+        let result = nodejieba.cut(ques.question)
+        console.log(result)
+        outputContent.push(result)
+    }
+}
+// 將測試的parse結果寫到檔案
+fs.writeFile("testParsingResult.json", JSON.stringify(outputContent), function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("File has been saved!");
+}); 
+
 // 儲存使用者變數
 // 先用簡單一點的寫法，有時間再改成好一點的寫法(例如寫成一個Object)
 let users = {}
@@ -66,6 +89,21 @@ let State = {
 function addUser(usrId){
     // Create and initiate a user and store it into object 'users'
     users[usrId] = {
+        fsm: new StateMachine({
+            initial: 'welcome',
+            events: [
+                { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
+                { name: 'textMode', from: 'welcome', to: 'query' },
+                { name: 'enterQuery', from: 'query', to: 'question_p' },
+                { name: 'answerQues_p', from: 'question_p', to: 'answer_p' },
+                { name: 'goToWelcome_p', from: 'answer_p', to: 'welcome' },
+                { name: 'goToQues',  from: 'chooseCategory', to: 'question' },
+                { name: 'answerQues', from: 'question', to: 'answer' },
+                { name: 'anotherQues', from: 'answer', to: 'question' },
+                { name: 'exitQues', from: 'answer', to: 'summary' },
+                { name: 'goToWelcome', from: 'summary', to: 'welcome' },
+            ]
+        }),
         state: State.start,
         score: undefined,
         category: undefined,
@@ -184,8 +222,11 @@ bot.on('message', function(event) {
     for(let i=0;i<quesBank.length;i++){
         options.push(quesBank[i].category)
     }
+    if( getUserState(curUserId) == State.welcome ){
 
-    if( getUserState(curUserId) == State.start ) {
+    }
+
+    else if( getUserState(curUserId) == State.start ) {
         if(options.includes(event.message.text)){   // 如果user回覆的是四種題型的其中一種
             setUserCategory(curUserId, options.indexOf(event.message.text))
             setUserState(curUserId, State.question)
