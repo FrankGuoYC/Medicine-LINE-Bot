@@ -165,14 +165,26 @@ function getUserQuesLen(usrId){
     return users[usrId].quesLen
 }
 
-function buttonTemplate(text, actions){
+function textTp(text){
+    return {
+        "type": "text",
+        "label": text,
+        "text": text
+    }
+}
+
+function messageTp(text){
+    return {
+        "type": "message",
+        "label": text,
+        "text": text
+    }
+}
+
+function buttonTp(text, actions){
     let actionArr = []
     for(let i=0;i<actions.length;i++){
-        actionArr.push({
-            "type": "message",
-            "label": actions[i],
-            "text": actions[i]
-        })
+        actionArr.push(messageTp(actions[i]))
     }
     return {
         "type": "template",
@@ -190,7 +202,7 @@ function buttonTemplate(text, actions){
     }
 }
 
-function confirmTemplate(text, actions){
+function confirmTp(text, actions){
     let actionArr = []
     for(let i=0;i<actions.length;i++){
         actionArr.push({
@@ -212,7 +224,6 @@ function confirmTemplate(text, actions){
 
 // 初始化回覆使用者button template的時候所需用到的options
 let categories = [] // 用於詢問使用者要使用哪一領域的問題
-let categoryButtons = []
 let welcomeButtons = []  // 用於歡迎畫面的按鈕
 
 // 初始化一些變數，例如: button template的選項內容
@@ -221,27 +232,8 @@ function init(){
     for(let i=0;i<quesBank.length;i++){
         categories.push(quesBank[i].category)
     }
-    // init categoryButtons
-    for(let i=0;i<quesBank.length;i++){
-        categoryButtons.push({
-                "type": "message",
-                "label": categories[i],
-                "text": categories[i]
-            }
-        )
-    }
     // init welcomeButtons
     welcomeButtons = ['我要玩遊戲','我要問問題']
-    // welcomeButtons.push({
-    //     "type": "message",
-    //     "label": "我要玩遊戲",
-    //     "text": "我要玩遊戲"
-    // })
-    // welcomeButtons.push({
-    //     "type": "message",
-    //     "label": "我要問問題",
-    //     "text": "我要問問題"
-    // })
 }
 
 init()  // 執行初始化
@@ -299,26 +291,9 @@ bot.on('message', function(event) {
     console.log("User message text: " + userMsg)
     // 根據user的state來做出對應的回覆
     let replyMsgs = []  // 用來存一個或多個要送出的訊息
-    let optionButtons = [] // 用來儲存問題的選項
 
     if( user.is('welcome') ){
-        replyMsgs.push(
-            buttonTemplate("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", welcomeButtons)
-            // {
-            //     "type": "template",
-            //     "altText": "This is a buttons template",
-            //     "template": {
-            //         "type": "buttons",
-            //         // "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
-            //         // "imageAspectRatio": "rectangle",
-            //         // "imageSize": "cover",
-            //         // "imageBackgroundColor": "#FFFFFF",
-            //         // "title": "Menu",
-            //         "text":  "哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式",
-            //         "actions": welcomeButtons
-            //     }
-            // }
-        )
+        replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", welcomeButtons) )
     }
     else if( user.is('chooseCategory') ) {
         if(categories.includes(userMsg)){   // 如果user回覆的是categories中的其中一種
@@ -329,46 +304,12 @@ bot.on('message', function(event) {
             // 開始出第一題
             let cat = user.category
             let quesNum = user.quesNum
-            let optsForQues = quesBank[cat].content[quesNum].option
-            for(let opt in optsForQues){
-                optionButtons.push({
-                        "type": "message",
-                        "label": optsForQues[opt],
-                        "text": optsForQues[opt]
-                    }
-                )
-            }
-            replyMsgs.push(
-                {
-                    "type": "template",
-                    "altText": "This is a buttons template",
-                    "template": {
-                        "type": "buttons",
-                        "text":  (curQuesNum+1)+". "+quesBank[curUserCategory].content[curQuesNum].question,
-                        "actions": optionButtons
-                    }   
-                }
-            )
-
+            let opts = quesBank[cat].content[quesNum].option
+            let ques = (curQuesNum+1)+". "+quesBank[curUserCategory].content[curQuesNum].question
+            replyMsgs.push(buttonTp(ques, opts))
         } else {
             // 停留在這個state，再次回覆chooseCategory template
-            replyMsgs.push(
-                {
-                    "type": "template",
-                    "altText": "This is a buttons template",
-                    "template": {
-                        "type": "buttons",
-                        // "thumbnailImageUrl": "https://example.com/bot/images/image.jpg",
-                        // "imageAspectRatio": "rectangle",
-                        // "imageSize": "cover",
-                        // "imageBackgroundColor": "#FFFFFF",
-                        // "title": "Menu",
-                        "text":  "哈囉，歡迎來到用藥常識大考驗^_^，請選擇一個問題類別",
-                        "actions": categoryButtons
-                    }
-                }
-            )
-
+            replyMsgs.push(buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇一個問題類別", categories))
         }
     }    
     else if ( user.is('question') ){
@@ -383,37 +324,15 @@ bot.on('message', function(event) {
             // 答對了!
             user.correctAnsNum++   // 答對題數+1，
             // 顯示正確訊息
-            replyMsgs.push(
-                {
-                    "type": "text",
-                    "label": "答對了!",
-                    "text": "答對了!"
-                }
-            )
+            replyMsgs.push(textTp("答對了!"))
         } else {
             // 答錯，顯示錯誤訊息
-            replyMsgs.push(
-                {
-                    "type": "text",
-                    "label": "答錯了，正確答案為: \"" + ansText +"\"",
-                    "text": "答錯了，正確答案為: \"" + ansText +"\""
-                }
-            )
+            replyMsgs.push(textTp("答錯了，正確答案為: \"" + ansText +"\""))
         }
 
         // 顯示詳解，不論對錯都會顯示詳解
-        replyMsgs.push(
-            {
-                "type": "text",
-                "label": detailedExpText,
-                "text": detailedExpText
-            }
-        )
+        replyMsgs.push(textTp(detailedExpText))
         user.quesNum++  // 答題數+1
-
-
-
-
 
         console.log(curQuesNum)
         console.log(quesBank[curUserCategory].content.length)
@@ -426,58 +345,14 @@ bot.on('message', function(event) {
             setUserState(curUserId, State.start)
             let score = Math.round( (getUserCorrectAnsNum(curUserId) / getUserQuesNo(curUserId) ) * 100 )
             setUserScore(curUserId, score)
-            replyMsgs.push(
-                {
-                    "type": "text",
-                    "label": "恭喜您完成了本遊戲! 您的得分為" + getUserScore(curUserId) + "分",
-                    "text":  "恭喜您完成了本遊戲! 您的得分為" + getUserScore(curUserId) + "分", 
-                }
-            )
-            replyMsgs.push(
-                {
-                    "type": "template",
-                    "altText": "this is a confirm template",
-                    "template": {
-                        "type": "confirm",
-                        "text": "是否再玩一次呢?",
-                        "actions": [
-                            {
-                                "type": "message",
-                                "label": "是",
-                                "text": "是"
-                            },
-                            {
-                                "type": "message",
-                                "label": "好",
-                                "text": "好"
-                            }
-                        ]
-                    }
-                }
-            )
+            replyMsgs.push( textTp("恭喜您完成了本遊戲! 您的得分為" + getUserScore(curUserId) + "分") )
+            replyMsgs.push( confirmTp("是否再玩一次呢?", ["是","好"]) )
         } else {
             // 顯示下一題的內容
-            let optsForQues = quesBank[curUserCategory].content[curQuesNum].option
-            for(let opt in optsForQues){
-                optionsForQuestion.push({
-                        "type": "message",
-                        "label": optsForQues[opt],
-                        "text": optsForQues[opt]
-                    }
-                )
-            }
+            let ques = (curQuesNum+1)+". "+quesBank[curUserCategory].content[curQuesNum].question
+            let opts = quesBank[curUserCategory].content[curQuesNum].option
 
-            replyMsgs.push(
-                {
-                    "type": "template",
-                    "altText": "This is a buttons template",
-                    "template": {
-                        "type": "buttons",
-                        "text":  (curQuesNum+1)+". "+quesBank[curUserCategory].content[curQuesNum].question,
-                        "actions": optionsForQuestion
-                    }   
-                }
-            )
+            replyMsgs.push( buttonTp(ques, opts) )
         }
     }
 
