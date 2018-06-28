@@ -340,16 +340,15 @@ bot.on('message', function(event) {
         let catIndex = categories.indexOf(user.category)
         // 判斷user前一題的答案是否正確
         let ans = quesBank[catIndex].content[user.quesNum].answer
-        let ansText = quesBank[catIndex].content[user.quesNum].option[ans]
         let detailedExpText = quesBank[catIndex].content[user.quesNum].detailed_exp
-        if(userMsg == ansText) {
+        if(userMsg == ans) {
             // 答對了!
             user.correctAnsNum++   // 答對題數+1，
             // 顯示正確訊息
             replyMsgs.push(textTp("答對了!"))
         } else {
             // 答錯，顯示錯誤訊息
-            replyMsgs.push(textTp("答錯了，正確答案為: \"" + ansText +"\""))
+            replyMsgs.push(textTp("答錯了，正確答案為: \"" + ans +"\""))
         }
 
         // 顯示詳解，不論對錯都會顯示詳解
