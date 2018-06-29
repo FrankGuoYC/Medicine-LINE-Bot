@@ -16,8 +16,8 @@ class User extends StateMachine {
                 { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
                 { name: 'textMode', from: 'welcome', to: 'query' },
                 { name: 'enterQuery', from: 'query', to: 'question_p' },
-                { name: 'answerQues_p', from: 'question_p', to: 'answer_p' },
-                { name: 'goToWelcome_p', from: 'answer_p', to: 'welcome' },
+                { name: 'answerQuesP', from: 'question_p', to: 'answer_p' },
+                { name: 'goToWelcomeP', from: 'answer_p', to: 'welcome' },
                 { name: 'goToQues',  from: 'chooseCategory', to: 'question' },
                 { name: 'answerQues', from: 'question', to: 'answer' },
                 { name: 'anotherQues', from: 'answer', to: 'question' },
@@ -253,7 +253,7 @@ bot.on('message', function(event) {
         replyMsgs.push(buttonTp(ques, opts))
         console.log("HaHaHa")
     } else if (user.is('question_p')) {
-        user.answerQues_p()
+        user.answerQuesP()
         // 判斷user的答案是否正確
         let catId = user.categoryId
         let quesNum = user.quesNum
@@ -270,7 +270,7 @@ bot.on('message', function(event) {
         replyMsgs.push(buttonTp(detailedExpText, ["我知道了"]))
         console.log("You cannot see me")
     } else if (user.is('answer_p')){
-        user.goToWelcome_p()
+        user.goToWelcomeP()
         replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
     }
     else if( user.is('chooseCategory') ) {
