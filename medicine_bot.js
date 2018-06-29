@@ -30,14 +30,10 @@ class User extends StateMachine {
         this.id = params.id || undefined
         this.name = params.name || undefined
         this.score = params.score || 0
-        this.category =  params.category || undefined
+        this.categoryId =  params.categoryId || undefined
         this.quesNum = params.quesNum || undefined
         this.correctAnsNum = params.correctAnsNum || undefined
         this.quesLen = params.quesLen || 5
-    }
-
-    run() {
-        console.log(`${this.name} is running!`)
     }
 
     initGameData() {
@@ -47,15 +43,12 @@ class User extends StateMachine {
     }
 }
 
-let userTest = new User({name: "Frank"})
-userTest.run()
-
 // require nodejieba
 const nodejieba = require('nodejieba')
 nodejieba.load({dict: './dict.txt'})    // 使用繁體中文詞典進行初始化
 // 測試parse結果
-let jiebaParsingResult = nodejieba.cut('電視廣告藥品好像很有效，直接買不用查證')
-console.log(jiebaParsingResult)
+// let jiebaParsingResult = nodejieba.cut('電視廣告藥品好像很有效，直接買不用查證')
+// console.log(jiebaParsingResult)
 
 
 
@@ -183,9 +176,9 @@ function init(){
 init()  // 執行初始化
 
 function find(jiebaResult){
-    let infoToReturn = {
-        quesNum: 0,
-        quesCategory: 0,
+    let quesInfo = {
+        cid: 0,
+        qid: 0,
     };
 	var match = 0;
 	var match_pref = 0;
@@ -202,12 +195,12 @@ function find(jiebaResult){
             }
             if(match>match_pref){
                 match_pref = match
-                infoToReturn.quesNum = quesNum + 1
-                infoToReturn.quesCategory = cat + 1
+                quesInfo.cid = cat
+                quesInfo.qid = quesNum
             }
         }
     }
-    return infoToReturn
+    return quesInfo
 }
 
 console.log(find(jiebaParsingResult))
@@ -245,24 +238,53 @@ bot.on('message', function(event) {
                 replyMsgs.push(buttonTp("請選擇一個問題類別", categories))
             } else if(userMsg == "我要問問題"){
                 user.textMode()
-                replyMsgs.push(textTp("請輸入你想知道哪方面的知識，系統會根據您的輸入回應最匹配的問題~"))
+                replyMsgs.push(textTp("請輸入你想知道哪方面的知識，系統會根據您的輸入丟出最匹配的問題~"))
             }
         } else {
             replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
         }
     }
     else if( user.is('query') ){
+        user.enterQuery()
+        let jiebaParsingResult = nodejieba.cut(userMsg)
+        let quesInfo = find(jiebaParsingResult)
+        user.quesNum = quesInfo.qid
+        user.categoryId = quesInfo.cid
+        let ques = quesBank[quesInfo.cid].content[quesInfo.qid].question
+        let opts = quesBank[quesInfo.cid].content[quesInfo.qid].option
+        replyMsgs.push(buttonTp(ques, opts))
         console.log("HaHaHa")
+    } else if (user.is('quesion_p')) {
+        user.answerQues_p()
+        // 判斷user的答案是否正確
+        let catId = user.categoryId
+        let quesNum = user.quesNum
+        let ans = quesBank[catId].content[quesNum].answer
+        let detailedExpText = quesBank[catId].content[quesNum].detailed_exp
+        if(userMsg == ans) {
+            // 答對了!
+            user.correctAnsNum++   // 答對題數+1，
+            // 顯示正確訊息
+            replyMsgs.push(textTp("答對了!"))
+        } else {
+            // 答錯，顯示錯誤訊息
+            replyMsgs.push(textTp("答錯了，正確答案為: \"" + ans +"\""))
+        }
+        user.quesNum++  // 答題數+1
+        replyMsgs.push(buttonTp(detailedExpText, ["我知道了"]))
+    } else if (user.is('answer_p')){
+        user.goToWelcome_p()
+        replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
     }
     else if( user.is('chooseCategory') ) {
         if(categories.includes(userMsg)){   // 如果user回覆的是categories中的其中一種
             // console.log("Categories: " + categories)
-            user.category = userMsg
+            user.categoryId = categories.indexOf(userMsg)
             user.goToQues()
             user.initGameData()
             console.log("開始出第一題")
             // 開始出第一題
-            let catIndex = categories.indexOf(user.category)
+            let catIndex = user.categoryId
             let quesNum = user.quesNum
             let opts = quesBank[catIndex].content[quesNum].option
             let ques = (quesNum+1)+". "+quesBank[catIndex].content[quesNum].question
@@ -275,7 +297,7 @@ bot.on('message', function(event) {
     else if ( user.is('question') ){
         user.answerQues()
         console.log("我是頭")
-        let catIndex = categories.indexOf(user.category)
+        let catIndex = user.categoryId
         // 判斷user前一題的答案是否正確
         let ans = quesBank[catIndex].content[user.quesNum].answer
         let detailedExpText = quesBank[catIndex].content[user.quesNum].detailed_exp
@@ -299,7 +321,7 @@ bot.on('message', function(event) {
         }
         console.log("我是尾")
     } else if ( user.is('answer') ) {
-        let catIndex = categories.indexOf(user.category)
+        let catIndex = user.categoryId
         // 檢查是否題目已經出完
         if(user.quesNum >= user.quesLen){
             // 使用者已完成題目
