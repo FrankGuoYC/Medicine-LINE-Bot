@@ -203,8 +203,6 @@ function find(jiebaResult){
     return quesInfo
 }
 
-console.log(find(jiebaParsingResult))
-
 
 let bot = linebot({
     channelId: "1582316615",
