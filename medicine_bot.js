@@ -252,7 +252,7 @@ bot.on('message', function(event) {
         let opts = quesBank[quesInfo.cid].content[quesInfo.qid].option
         replyMsgs.push(buttonTp(ques, opts))
         console.log("HaHaHa")
-    } else if (user.is('quesion_p')) {
+    } else if (user.is('question_p')) {
         user.answerQues_p()
         // 判斷user的答案是否正確
         let catId = user.categoryId
