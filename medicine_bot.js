@@ -261,14 +261,12 @@ bot.on('message', function(event) {
         let detailedExpText = quesBank[catId].content[quesNum].detailed_exp
         if(userMsg == ans) {
             // 答對了!
-            user.correctAnsNum++   // 答對題數+1，
             // 顯示正確訊息
             replyMsgs.push(textTp("答對了!"))
         } else {
             // 答錯，顯示錯誤訊息
             replyMsgs.push(textTp("答錯了，正確答案為: \"" + ans +"\""))
         }
-        user.quesNum++  // 答題數+1
         replyMsgs.push(buttonTp(detailedExpText, ["我知道了"]))
         console.log("You cannot see me")
     } else if (user.is('answer_p')){
