@@ -270,6 +270,7 @@ bot.on('message', function(event) {
         }
         user.quesNum++  // 答題數+1
         replyMsgs.push(buttonTp(detailedExpText, ["我知道了"]))
+        console.log("You cannot see me")
     } else if (user.is('answer_p')){
         user.goToWelcome_p()
         replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
