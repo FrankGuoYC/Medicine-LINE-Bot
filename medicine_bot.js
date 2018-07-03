@@ -293,7 +293,7 @@ bot.on('message', function(event) {
     }    
     else if ( user.is('question') ){
         user.answerQues()
-        console.log("我是頭")
+        // console.log("我是頭")
         let catIndex = user.categoryId
         // 判斷user前一題的答案是否正確
         let ans = quesBank[catIndex].content[user.quesNum].answer
@@ -312,13 +312,13 @@ bot.on('message', function(event) {
         if(user.quesNum >= user.quesLen){   // 已答完所有題目
             // 顯示詳解
             replyMsgs.push(textTp(detailedExpText))
-            replyMsgs.push(buttonTp("查看成績?", ["查看成績"]))
+            replyMsgs.push(buttonTp("恭喜你完成題目咯~", ["查看成績"]))
         } else {
             // 顯示詳解
             replyMsgs.push(textTp(detailedExpText))
-            replyMsgs.push(buttonTp("繼續進行下一題?", ["下一題"]))
+            replyMsgs.push(buttonTp("繼續進行下一題?", ["回主畫面","下一題"]))
         }
-        console.log("我是尾")
+        // console.log("我是尾")
     } else if ( user.is('answer') ) {
         let catIndex = user.categoryId
         // 檢查是否題目已經出完
@@ -329,6 +329,9 @@ bot.on('message', function(event) {
             user.score = Math.round( user.correctAnsNum.toFixed(2) / user.quesNum * 100)
             replyMsgs.push( textTp("恭喜您完成了本遊戲! 您的得分為" + user.score + "分") )
             replyMsgs.push( confirmTp("是否再玩一次呢?", ["是","好"]) )
+        } else if (userMsg == "回主畫面") {
+            user.goto('welcome')
+            replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
         } else {
             // 尚未完成，繼續顯示下一題的template供使用者回覆
             user.anotherQues()
