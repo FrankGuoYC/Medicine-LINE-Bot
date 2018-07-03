@@ -15,9 +15,9 @@ class User extends StateMachine {
             transitions: [
                 { name: 'buttonMode',  from: 'welcome',  to: 'chooseCategory' },
                 { name: 'textMode', from: 'welcome', to: 'query' },
-                { name: 'enterQuery', from: 'query', to: 'question_p' },
-                { name: 'answerQuesP', from: 'question_p', to: 'answer_p' },
-                { name: 'goToWelcomeP', from: 'answer_p', to: 'welcome' },
+                { name: 'enterQuery', from: 'query', to: 'questionP' },
+                { name: 'answerQuesP', from: 'questionP', to: 'answerP' },
+                { name: 'goToWelcomeP', from: 'answerP', to: 'welcome' },
                 { name: 'goToQues',  from: 'chooseCategory', to: 'question' },
                 { name: 'answerQues', from: 'question', to: 'answer' },
                 { name: 'anotherQues', from: 'answer', to: 'question' },
@@ -252,7 +252,7 @@ bot.on('message', function(event) {
         let opts = quesBank[quesInfo.cid].content[quesInfo.qid].option
         replyMsgs.push(buttonTp(ques, opts))
         console.log("HaHaHa")
-    } else if (user.is('question_p')) {
+    } else if (user.is('questionP')) {
         user.answerQuesP()
         // 判斷user的答案是否正確
         let catId = user.categoryId
@@ -269,7 +269,7 @@ bot.on('message', function(event) {
         }
         replyMsgs.push(buttonTp(detailedExpText, ["我知道了"]))
         console.log("You cannot see me")
-    } else if (user.is('answer_p')){
+    } else if (user.is('answerP')){
         user.goToWelcomeP()
         replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
     }
@@ -311,10 +311,12 @@ bot.on('message', function(event) {
         user.quesNum++  // 答題數+1
         if(user.quesNum >= user.quesLen){   // 已答完所有題目
             // 顯示詳解
-            replyMsgs.push(buttonTp(detailedExpText, ["我知道了，查看成績"]))
+            replyMsgs.push(textTp(detailedExpText))
+            replyMsgs.push(buttonTp("查看成績?", ["查看成績"]))
         } else {
             // 顯示詳解
-            replyMsgs.push(buttonTp(detailedExpText, ["我知道了，下一題"]))
+            replyMsgs.push(textTp(detailedExpText))
+            replyMsgs.push(buttonTp("繼續進行下一題?", ["下一題"]))
         }
         console.log("我是尾")
     } else if ( user.is('answer') ) {
