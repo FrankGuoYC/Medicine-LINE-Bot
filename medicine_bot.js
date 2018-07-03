@@ -316,7 +316,7 @@ bot.on('message', function(event) {
         } else {
             // 顯示詳解
             replyMsgs.push(textTp(detailedExpText))
-            replyMsgs.push(buttonTp("繼續進行下一題?", ["回主畫面","下一題"]))
+            replyMsgs.push(confirmTp("繼續進行下一題?", ["回主畫面","下一題"]))
         }
         // console.log("我是尾")
     } else if ( user.is('answer') ) {
