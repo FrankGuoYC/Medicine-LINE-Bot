@@ -262,13 +262,14 @@ bot.on('message', function(event) {
         if(userMsg == ans) {
             // 答對了!
             // 顯示正確訊息
-            replyMsgs.push(textTp("答對了!"))
+            replyMsgs.push(textTp("✅答對了!"))
         } else {
             // 答錯，顯示錯誤訊息
-            replyMsgs.push(textTp("答錯了，正確答案為: \"" + ans +"\""))
+            replyMsgs.push(textTp("❌答錯了，正確答案為: \"" + ans +"\""))
         }
-        replyMsgs.push(buttonTp(detailedExpText, ["我知道了"]))
-        console.log("You cannot see me")
+        replyMsgs.push(textTp(detailedExpText))
+        replyMsgs.push(buttonTp("回到主畫面?", ["回主畫面"]))
+        // console.log("You cannot see me")
     } else if (user.is('answerP')){
         user.goToWelcomeP()
         replyMsgs.push( buttonTp("哈囉，歡迎來到用藥常識大考驗^_^，請選擇你所想要使用的模式", modes) )
@@ -302,10 +303,10 @@ bot.on('message', function(event) {
             // 答對了!
             user.correctAnsNum++   // 答對題數+1，
             // 顯示正確訊息
-            replyMsgs.push(textTp("答對了!"))
+            replyMsgs.push(textTp("✅答對了!"))
         } else {
             // 答錯，顯示錯誤訊息
-            replyMsgs.push(textTp("答錯了，正確答案為: \"" + ans +"\""))
+            replyMsgs.push(textTp("❌答錯了，正確答案為: \"" + ans +"\""))
         }
 
         user.quesNum++  // 答題數+1
