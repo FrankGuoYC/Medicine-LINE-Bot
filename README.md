@@ -2,7 +2,7 @@
 
 用手機開啟LINE後，掃下方的QR code加機器人為好友後，就可以開始和機器人進行聊天
 <center>
-    <img src="img/qrcode.png" title="qrcode" width="200" /> 
+    <img src="img/qrcode.png" alt="qrcode" title="qrcode" width="200" /> 
 </center>
 
 這是大四的自然語言課程，我與另一位系上友人所開發出的用藥常識小遊戲機器人，主要使用javascript(Node.js)進行開發。程式運行在Heroku上，然後使用webhook與LINE Messaging API連接。使用到的技術有中文斷詞(使用結巴斷詞套件)以及簡易的NLP。
@@ -25,6 +25,6 @@
 ## 展示
 
 <center class="half">
-    <img title="demo1" src="demo/demo1.jpg" width="250"/>
-    <img title="demo2" src="demo/demo2.jpg" width="250"/>
+    <img title="demo1" alt="demo1" src="demo/demo1.jpg" width="250"/>
+    <img title="demo2" alt="demo2" src="demo/demo2.jpg" width="250"/>
 </center>

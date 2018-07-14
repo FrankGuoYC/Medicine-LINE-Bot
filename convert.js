@@ -28,6 +28,8 @@ for(let i=0;i<quesBank.length;i++){
   }
 }
 
+// 如果直接用JSON.stringify(quesBank)，所輸出的json檔會沒有排版(minified)很難讀，
+// 所以我改用JSON.stringify(quesBank, null, 4)，這樣子輸出的json檔就會有縮排，且縮排大小是4個空格
 fs.writeFile("ques_bank.json", JSON.stringify(quesBank, null, 4), function(err) {
     if(err) {
         return console.log(err);
