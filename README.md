@@ -1,6 +1,6 @@
 # 用藥常識大考驗 <img src="img/thumbnail.png" title="thumbnail" width="40" />
 
-用手機開啟LINE後，掃下方的QR code加機器人為好友後，就可以開始和機器人進行聊天
+用手機開啟LINE並掃描下方的QR code加機器人為好友後，就可以開始和機器人進行遊戲
 <center>
     <img src="img/qrcode.png" alt="qrcode" title="qrcode" width="200" /> 
 </center>
