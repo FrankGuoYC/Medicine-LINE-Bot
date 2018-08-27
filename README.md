@@ -5,7 +5,7 @@
     <img src="img/qrcode.png" alt="qrcode" title="qrcode" width="200" /> 
 </center>
 
-這是我與另一位系上友人在自然語言處理課程所開發出的用藥常識小遊戲機器人，主要使用javascript(Node.js)進行開發。
+這是我與另一位系上友人在自然語言處理課程所開發出的用藥常識小遊戲機器人，我負責外部架構以及將服務部屬到雲端Server的部分，主要使用javascript(Node.js)進行開發。
 程式運行在Heroku上，並且使用webhook與LINE Messaging API連接。使用到的技術有中文斷詞(結巴斷詞套件)以及簡易的NLP。
 
 **註:** 我將`node_modules/`加到`.gitignore`，因為Heroku會自動安裝在js檔中`require`的模組，不需要額外再上傳本地端node模組所在的資料夾(`node_modules/`)
